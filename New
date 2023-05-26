@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dynamic Iframe Source</title>
+  </head>
+  <body>
+    <input type="text" id="filterInput" onkeyup="updateIframe()" placeholder="Enter filter value" />
+    <br />
+    <iframe id="myIframe" src="" width="500" height="300"></iframe>
+
+    <script>
+      function updateIframe() {
+        var filterValue = document.getElementById('filterInput').value;
+        var iframe = document.getElementById('myIframe');
+        var baseUrl = 'https://example.com/';
+        var filterParam = '?filter=' + encodeURIComponent(filterValue);
+        iframe.src = baseUrl + filterParam;
+      }
+    </script>
+  </body>
+</html>
