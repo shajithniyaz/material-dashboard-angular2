@@ -134,6 +134,13 @@
       var compareMode = false;
       var filters = {};
 
+      // Define the URLs for the three iframes
+      var urls = {
+        iframe1: 'https://www.example.com/iframe1',
+        iframe2: 'https://www.google.com/iframe2',
+        iframe3: 'https://www.example.com/iframe3',
+      };
+
       function openFrame(frameNumber) {
         var iframeId = 'iframe' + frameNumber;
 
@@ -275,9 +282,11 @@
         }
       }
 
+
       function applyFilters(iframeId) {
         var iframe = document.getElementById(iframeId);
-        var iframeSrc = 'https://www.example.com';
+        var iframeSrc = urls[iframeId] || '';
+
         var hasFilters = false;
 
         for (var filterType in filters) {
@@ -290,7 +299,7 @@
         if (hasFilters) {
           iframe.src = iframeSrc;
         } else {
-          iframe.src = 'https://www.example.com';
+          iframe.src = urls[iframeId] || '';
         }
       }
 
