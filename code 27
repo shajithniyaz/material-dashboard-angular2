@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Comparing Iframes</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+
+      #frameContainer {
+        flex: 2;
+        display: flex;
+      }
+
+      #buttonContainer {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 10px;
+        background-color: #f2f2f2;
+      }
+
+      .frameButtons {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+
+      .frameButton {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+        margin-bottom: 5px;
+      }
+
+      .frameButton:hover {
+        cursor: pointer;
+      }
+
+      .frameButtonIcon {
+        margin-right: 5px;
+      }
+
+      .iframeWrapper {
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="frameContainer"></div>
+
+    <div id="buttonContainer">
+      <div class="frameButtons">
+        <div class="frameButton" onclick="openFrame(1)">
+          <span class="frameButtonIcon">⬛</span>
+          Open Frame 1
+        </div>
+        <div class="frameButton" onclick="compareFrame(1)">
+          <span id="compareIcon1" class="frameButtonIcon">➕</span>
+          Compare Frame 1
+        </div>
+      </div>
+
+      <div class="frameButtons">
+        <div class="frameButton" onclick="openFrame(2)">
+          <span class="frameButtonIcon">⬛</span>
+          Open Frame 2
+        </div>
+        <div class="frameButton" onclick="compareFrame(2)">
+          <span id="compareIcon2" class="frameButtonIcon">➕</span>
+          Compare Frame 2
+        </div>
+      </div>
+
+      <div class="frameButtons">
+        <div class="frameButton" onclick="openFrame(3)">
+          <span class="frameButtonIcon">⬛</span>
+          Open Frame 3
+        </div>
+        <div class="frameButton" onclick="compareFrame(3)">
+          <span id="compareIcon3" class="frameButtonIcon">➕</span>
+          Compare Frame 3
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var frameContainer = document.getElementById('frameContainer');
+      var frameStates = {};
+
+      function openFrame(frameNumber) {
+        var iframeId = 'iframe' + frameNumber;
+
+        if (frameStates[iframeId]) {
+          // Frame is already open, switch focus
+          switchFocus(iframeId);
+        } else {
+          // Frame is closed, open it
+          closeAllFrames();
+          createIframe(iframeId);
+          frameStates[iframeId] = true;
+        }
+      }
+
+      function compareFrame(frameNumber) {
+        var iframeId = 'iframe' + frameNumber;
+        var compareIcon = document.getElementById('compareIcon' + frameNumber);
+
+        if (frameStates[iframeId]) {
+          // Frame is open, remove it
+          removeIframe(iframeId);
+          compareIcon.textContent = '➕';
+          frameStates[iframeId] = false;
+        } else {
+          // Frame is closed, add it
+          createIframe(iframeId);
+          compareIcon.textContent = '➖';
+          frameStates[iframeId] = true;
+        }
+      }
+
+      function createIframe(iframeId) {
+        var newIframeWrapper = document.createElement('div');
+        newIframeWrapper.className = 'iframeWrapper';
+        var newIframe = document.createElement('iframe');
+        newIframe.id = iframeId;
+        newIframe.src = 'https://www.example.com';
+        newIframe.width = '500';
+        newIframe.height = '300';
+        newIframeWrapper.appendChild(newIframe);
+        frameContainer.appendChild(newIframeWrapper);
+      }
+
+      function removeIframe(iframeId) {
+        var iframeWrapper = document.getElementById(iframeId).parentNode;
+        frameContainer.removeChild(iframeWrapper);
+      }
+
+      function closeAllFrames() {
+        for (var frameId in frameStates) {
+          if (frameStates.hasOwnProperty(frameId) && frameStates[frameId]) {
+            removeIframe(frameId);
+            frameStates[frameId] = false;
+          }
+        }
+      }
+
+      function switchFocus(iframeId) {
+        var iframeWrapper = document.getElementById(iframeId).parentNode;
+        var currentIndex = Array.prototype.indexOf.call(frameContainer.children, iframeWrapper);
+        var nextIndex = (currentIndex + 1) % frameContainer.children.length;
+        frameContainer.insertBefore(iframeWrapper, frameContainer.children[nextIndex]);
+      }
+    </script>
+  </body>
+</html>
