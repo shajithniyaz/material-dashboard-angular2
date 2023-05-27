@@ -5,7 +5,6 @@
     <style>
       body {
         display: flex;
-        flex-direction: row;
         height: 100vh;
         margin: 0;
         padding: 0;
@@ -14,6 +13,11 @@
       #frameContainer {
         flex: 2;
         display: flex;
+      }
+
+      .iframeWrapper {
+        flex: 1;
+        margin-right: 10px;
       }
 
       #buttonContainer {
@@ -32,23 +36,15 @@
         margin-bottom: 10px;
       }
 
-      .frameButton {
-        display: flex;
-        align-items: center;
-        margin-right: 10px;
-        margin-bottom: 5px;
-      }
-
-      .frameButton:hover {
-        cursor: pointer;
-      }
-
+        .frameButton {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    cursor: pointer; /* Added cursor property */
+  }
       .frameButtonIcon {
         margin-right: 5px;
-      }
-
-      .iframeWrapper {
-        margin-right: 10px;
       }
     </style>
   </head>
@@ -88,11 +84,52 @@
           Compare Frame 3
         </div>
       </div>
+
+      <div class="frameButtons">
+        <div class="frameButton" onclick="openFrame(4)">
+          <span class="frameButtonIcon">⬛</span>
+          Open Frame 4
+        </div>
+        <div class="frameButton" onclick="compareFrame(4)">
+          <span id="compareIcon4" class="frameButtonIcon">➕</span>
+          Compare Frame 4
+        </div>
+      </div>
+
+      <div class="frameButtons">
+        <div class="frameButton" onclick="openFrame(5)">
+          <span class="frameButtonIcon">⬛</span>
+          Open Frame 5
+        </div>
+        <div class="frameButton" onclick="compareFrame(5)">
+          <span id="compareIcon5" class="frameButtonIcon">➕</span>
+          Compare Frame 5
+        </div>
+      </div>
+
+      <div class="frameButtons">
+        <div class="frameButton" onclick="openFrame(6)">
+          <span class="frameButtonIcon">⬛</span>
+          Open Frame 6
+        </div>
+        <div class="frameButton" onclick="compareFrame(6)">
+          <span id="compareIcon6" class="frameButtonIcon">➕</span>
+          Compare Frame 6
+        </div>
+      </div>
     </div>
 
     <script>
       var frameContainer = document.getElementById('frameContainer');
       var frameStates = {};
+      var compareMode = false;
+
+      var url1 = 'https://www.example.com';
+      var url2 = 'https://www.example.org';
+      var url3 = 'https://www.example.net';
+      var url4 = 'https://www.example.com/page2';
+      var url5 = 'https://www.example.org/page2';
+      var url6 = 'https://www.example.net/page2';
 
       function openFrame(frameNumber) {
         var iframeId = 'iframe' + frameNumber;
@@ -103,7 +140,7 @@
         } else {
           // Frame is closed, open it
           closeAllFrames();
-          createIframe(iframeId);
+          createIframe(iframeId, getUrl(frameNumber));
           frameStates[iframeId] = true;
         }
       }
@@ -119,20 +156,22 @@
           frameStates[iframeId] = false;
         } else {
           // Frame is closed, add it
-          createIframe(iframeId);
+          createIframe(iframeId, getUrl(frameNumber));
           compareIcon.textContent = '➖';
           frameStates[iframeId] = true;
         }
+
+        updateFrameSizes();
       }
 
-      function createIframe(iframeId) {
+      function createIframe(iframeId, url) {
         var newIframeWrapper = document.createElement('div');
         newIframeWrapper.className = 'iframeWrapper';
         var newIframe = document.createElement('iframe');
         newIframe.id = iframeId;
-        newIframe.src = 'https://www.example.com';
-        newIframe.width = '500';
-        newIframe.height = '300';
+        newIframe.src = url;
+        newIframe.width = '100%';
+        newIframe.height = '100%';
         newIframeWrapper.appendChild(newIframe);
         frameContainer.appendChild(newIframeWrapper);
       }
@@ -156,6 +195,43 @@
         var currentIndex = Array.prototype.indexOf.call(frameContainer.children, iframeWrapper);
         var nextIndex = (currentIndex + 1) % frameContainer.children.length;
         frameContainer.insertBefore(iframeWrapper, frameContainer.children[nextIndex]);
+      }
+
+      function updateFrameSizes() {
+        var iframeWrappers = frameContainer.getElementsByClassName('iframeWrapper');
+        var numFrames = iframeWrappers.length;
+
+        if (compareMode) {
+          // Divide the available space equally among the frames
+          var frameWidth = 'calc(50% - 5px)';
+          for (var i = 0; i < numFrames; i++) {
+            iframeWrappers[i].style.width = frameWidth;
+          }
+        } else {
+          // Each frame occupies the entire area
+          for (var j = 0; j < numFrames; j++) {
+            iframeWrappers[j].style.width = '100%';
+          }
+        }
+      }
+
+      function getUrl(frameNumber) {
+        switch (frameNumber) {
+          case 1:
+            return url1;
+          case 2:
+            return url2;
+          case 3:
+            return url3;
+          case 4:
+            return url4;
+          case 5:
+            return url5;
+          case 6:
+            return url6;
+          default:
+            return '';
+        }
       }
     </script>
   </body>
