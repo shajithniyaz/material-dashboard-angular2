@@ -36,15 +36,40 @@
         margin-bottom: 10px;
       }
 
-        .frameButton {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    cursor: pointer; /* Added cursor property */
-  }
+      .frameButton {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+        margin-bottom: 5px;
+      }
+
+      .frameButton:hover {
+        cursor: pointer;
+      }
+
       .frameButtonIcon {
         margin-right: 5px;
+      }
+
+      .filtersContainer {
+        margin-bottom: 10px;
+      }
+
+      .filter {
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
+        background-color: #f9f9f9;
+        padding: 5px;
+        border-radius: 3px;
+      }
+
+      .filterValue {
+        margin-right: 5px;
+      }
+
+      .filterDeleteIcon {
+        cursor: pointer;
       }
     </style>
   </head>
@@ -85,51 +110,29 @@
         </div>
       </div>
 
-      <div class="frameButtons">
-        <div class="frameButton" onclick="openFrame(4)">
-          <span class="frameButtonIcon">⬛</span>
-          Open Frame 4
-        </div>
-        <div class="frameButton" onclick="compareFrame(4)">
-          <span id="compareIcon4" class="frameButtonIcon">➕</span>
-          Compare Frame 4
-        </div>
-      </div>
-
-      <div class="frameButtons">
-        <div class="frameButton" onclick="openFrame(5)">
-          <span class="frameButtonIcon">⬛</span>
-          Open Frame 5
-        </div>
-        <div class="frameButton" onclick="compareFrame(5)">
-          <span id="compareIcon5" class="frameButtonIcon">➕</span>
-          Compare Frame 5
+      <div class="filtersContainer">
+        <button onclick="toggleFilterDropdown()">Add Filters</button>
+        <div id="filterDropdown" style="display: none">
+          <select id="filterTypeSelect">
+            <option value="ID">ID</option>
+            <option value="Date">Date</option>
+            <option value="Name">Name</option>
+          </select>
+          <input id="filterValueInput" type="text" placeholder="Filter Value" />
+          <button onclick="addFilter()">Save Filter</button>
         </div>
       </div>
 
-      <div class="frameButtons">
-        <div class="frameButton" onclick="openFrame(6)">
-          <span class="frameButtonIcon">⬛</span>
-          Open Frame 6
-        </div>
-        <div class="frameButton" onclick="compareFrame(6)">
-          <span id="compareIcon6" class="frameButtonIcon">➕</span>
-          Compare Frame 6
-        </div>
-      </div>
+      <div id="appliedFilters"></div>
+
+      <button onclick="clearFilters()">Clear Filters</button>
     </div>
 
     <script>
       var frameContainer = document.getElementById('frameContainer');
       var frameStates = {};
       var compareMode = false;
-
-      var url1 = 'https://www.example.com';
-      var url2 = 'https://www.example.org';
-      var url3 = 'https://www.example.net';
-      var url4 = 'https://www.example.com/page2';
-      var url5 = 'https://www.example.org/page2';
-      var url6 = 'https://www.example.net/page2';
+      var filters = {};
 
       function openFrame(frameNumber) {
         var iframeId = 'iframe' + frameNumber;
@@ -140,8 +143,9 @@
         } else {
           // Frame is closed, open it
           closeAllFrames();
-          createIframe(iframeId, getUrl(frameNumber));
+          createIframe(iframeId);
           frameStates[iframeId] = true;
+          applyFilters(iframeId);
         }
       }
 
@@ -156,20 +160,20 @@
           frameStates[iframeId] = false;
         } else {
           // Frame is closed, add it
-          createIframe(iframeId, getUrl(frameNumber));
+          createIframe(iframeId);
           compareIcon.textContent = '➖';
           frameStates[iframeId] = true;
+          applyFilters(iframeId);
         }
 
         updateFrameSizes();
       }
 
-      function createIframe(iframeId, url) {
+      function createIframe(iframeId) {
         var newIframeWrapper = document.createElement('div');
         newIframeWrapper.className = 'iframeWrapper';
         var newIframe = document.createElement('iframe');
         newIframe.id = iframeId;
-        newIframe.src = url;
         newIframe.width = '100%';
         newIframe.height = '100%';
         newIframeWrapper.appendChild(newIframe);
@@ -215,23 +219,86 @@
         }
       }
 
-      function getUrl(frameNumber) {
-        switch (frameNumber) {
-          case 1:
-            return url1;
-          case 2:
-            return url2;
-          case 3:
-            return url3;
-          case 4:
-            return url4;
-          case 5:
-            return url5;
-          case 6:
-            return url6;
-          default:
-            return '';
+      function toggleFilterDropdown() {
+        var filterDropdown = document.getElementById('filterDropdown');
+        filterDropdown.style.display = filterDropdown.style.display === 'none' ? 'block' : 'none';
+      }
+
+      function addFilter() {
+        var filterTypeSelect = document.getElementById('filterTypeSelect');
+        var filterValueInput = document.getElementById('filterValueInput');
+
+        var filterType = filterTypeSelect.value;
+        var filterValue = filterValueInput.value.trim();
+
+        if (filterValue !== '') {
+          filters[filterType] = filterValue;
+          createFilterElement(filterType, filterValue);
+          filterValueInput.value = '';
+          applyFiltersToAllFrames();
         }
+      }
+
+      function createFilterElement(filterType, filterValue) {
+        var appliedFilters = document.getElementById('appliedFilters');
+
+        var filterContainer = document.createElement('div');
+        filterContainer.className = 'filter';
+
+        var filterText = document.createElement('span');
+        filterText.className = 'filterValue';
+        filterText.textContent = filterType + ': ' + filterValue;
+
+        var deleteIcon = document.createElement('span');
+        deleteIcon.className = 'filterDeleteIcon';
+        deleteIcon.textContent = '❌';
+        deleteIcon.onclick = function () {
+          removeFilter(filterType);
+        };
+
+        filterContainer.appendChild(filterText);
+        filterContainer.appendChild(deleteIcon);
+
+        appliedFilters.appendChild(filterContainer);
+      }
+
+      function removeFilter(filterType) {
+        delete filters[filterType];
+        applyFiltersToAllFrames();
+      }
+
+      function applyFiltersToAllFrames() {
+        for (var frameId in frameStates) {
+          if (frameStates.hasOwnProperty(frameId) && frameStates[frameId]) {
+            applyFilters(frameId);
+          }
+        }
+      }
+
+      function applyFilters(iframeId) {
+        var iframe = document.getElementById(iframeId);
+        var iframeSrc = 'https://www.example.com';
+        var hasFilters = false;
+
+        for (var filterType in filters) {
+          if (filters.hasOwnProperty(filterType)) {
+            hasFilters = true;
+            iframeSrc += '&' + filterType + '=' + encodeURIComponent(filters[filterType]);
+          }
+        }
+
+        if (hasFilters) {
+          iframe.src = iframeSrc;
+        } else {
+          iframe.src = 'https://www.example.com';
+        }
+      }
+
+      function clearFilters() {
+        filters = {};
+        var appliedFilters = document.getElementById('appliedFilters');
+        appliedFilters.innerHTML = '';
+        applyFiltersToAllFrames();
       }
     </script>
   </body>
