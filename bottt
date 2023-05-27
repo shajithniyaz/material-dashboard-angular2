@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
+    <style>
+        body {
+            background-color: #fff;
+            color: #000;
+        }
+
+        #chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #000;
+            z-index: 9999;
+            display: none;
+        }
+
+        #chatbot-header {
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #chatbot-body {
+            padding: 10px;
+            max-height: 330px;
+            overflow-y: auto;
+        }
+
+        #chatbot-footer {
+            padding: 10px;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-message {
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        .bot-message {
+            margin-bottom: 10px;
+        }
+
+        .user-message .message-banner {
+            background-color: #e1f7ff;
+            border-radius: 10px 10px 0 10px;
+            padding: 5px;
+            display: inline-block;
+        }
+
+        .bot-message .message-banner {
+            background-color: #d8d8d8;
+            border-radius: 10px 10px 10px 0;
+            padding: 5px;
+            display: inline-block;
+        }
+
+        #user-input {
+            width: calc(100% - 30px);
+            padding: 5px;
+            border: none;
+            border-radius: 3px;
+        }
+
+        #send-button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background-color: transparent;
+            color: #555;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .collapsed #chatbot-body,
+        .collapsed #chatbot-footer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbot-container">
+        <div id="chatbot-header">Chatbot</div>
+        <div id="chatbot-body">
+            <div class="bot-message">
+                <span class="message-banner">Hi, how may I help you?</span>
+            </div>
+        </div>
+        <div id="chatbot-footer">
+            <input type="text" id="user-input" placeholder="Type your message" />
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/js/all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var chatbotContainer = document.getElementById('chatbot-container');
+            var chatbotHeader = document.getElementById('chatbot-header');
+            var chatbotBody = document.getElementById('chatbot-body');
+            var userInput = document.getElementById('user-input');
+            var sendButton = document.getElementById('send-button');
+            var responses = [
+                {
+                    query: 'What is your name?',
+                    response: "My name is Chatbot."
+                },
+                {
+                    query: 'How can I contact you?',
+                    response: "You can reach out to us at support@example.com."
+                },
+                // Add more predefined queries and responses here
+            ];
+
+            var index = 0;
+
+            function toggleChatbot() {
+                chatbotContainer.classList.toggle('collapsed');
+            }
+
+            function displayMessage(message, sender) {
+                var messageElement = document.createElement('div');
+                var messageBanner = document.createElement('span');
+                messageBanner.textContent = message;
+                messageBanner.classList.add('message-banner');
+                messageElement.classList.add(sender + '-message');
+                messageElement.appendChild(messageBanner);
+                chatbotBody.appendChild(messageElement);
+                chatbotBody.scrollTop = chatbotBody.scrollHeight;
+            }
+
+            function processUserInput() {
+                var userMessage = userInput.value;
+                displayMessage(userMessage, 'user');
+
+                if (index <= responses.length) {
+                    var botResponse = responses[index].response;
+                    displayMessage(botResponse, 'bot');
+                    index++;
+                } else {
+                    var emailMessage = "I'm sorry, I can't assist you further. Please email us at support@example.com.";
+                    displayMessage(emailMessage, 'bot');
+                }
+
+                userInput.value = '';
+            }
+
+            chatbotHeader.addEventListener('click', toggleChatbot);
+            sendButton.addEventListener('click', processUserInput);
+            userInput.addEventListener('keydown', function (event) {
+                if (event.keyCode === 13) {
+                    processUserInput();
+                }
+            });
+
+            // Show the chatbot by default
+            chatbotContainer.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
