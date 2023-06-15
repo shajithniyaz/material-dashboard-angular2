@@ -185,3 +185,40 @@ app.listen(3000, () => {
 Now, when you run the server using `node server.js`, you will have a login page at `http://localhost:3000/login`. After successful login, you will be redirected to the customer information form at `http://localhost:3000`, where you can submit the form data. The data will be stored in separate JSON files for each user inside the `data` directory.
 
 Please note that this example is still basic and may not be suitable for production environments. It is always recommended to implement additional security measures and consider using a database to store user information and form data.
+
+
+
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+}
+
+input[type="submit"] {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+}
