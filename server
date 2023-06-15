@@ -1,0 +1,187 @@
+To add login functionality and categorize the stored data based on individual users, you will need to incorporate user authentication and implement a user-specific data storage mechanism. Here's an updated version of the code using Node.js, Express, and Passport.js for authentication:
+
+1. Install the required dependencies by running the following commands in your project directory:
+
+```
+npm install express express-session passport passport-local bcrypt
+```
+
+2. Update the `server.js` file with the following code:
+
+```javascript
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+const fs = require('fs');
+
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static('public'));
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        // Replace this with your own user retrieval logic (e.g., fetching from a database)
+        const user = {
+            id: 1,
+            username: 'admin',
+            password: '$2b$10$4Qn0mYU/Vuw3N8jgbclbzOgjWDE4ACq.YGpzEsDkupI4d22ijfQDq' // hashed password: 'password'
+        };
+
+        bcrypt.compare(password, user.password, function(err, res) {
+            if (err) { return done(err); }
+            if (!res) { return done(null, false); }
+
+            return done(null, user);
+        });
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    // Replace this with your own user retrieval logic (e.g., fetching from a database)
+    const user = {
+        id: 1,
+        username: 'admin'
+    };
+
+    done(null, user);
+});
+
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+app.get('/', ensureAuthenticated, (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(__dirname + '/public/login.html');
+});
+
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+}));
+
+app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/login');
+});
+
+app.post('/submit', ensureAuthenticated, (req, res) => {
+    const userId = req.user.id;
+    const location = req.body.location;
+    const name = req.body.name;
+    const id = req.body.id;
+    const date = req.body.date;
+
+    const formData = {
+        Location: location,
+        Name: name,
+        ID: id,
+        Date: date
+    };
+
+    const jsonData = JSON.stringify(formData);
+
+    // Create a separate directory for each user
+    const userDir = __dirname + '/data/' + userId;
+    if (!fs.existsSync(userDir)) {
+        fs.mkdirSync(userDir);
+    }
+
+    fs.writeFile(userDir + '/data.json', jsonData, (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error saving form data.');
+        } else {
+            res.send('Form data saved successfully.');
+        }
+    });
+});
+
+app.listen(3000, () => {
+    console.log('Server is running on port
+
+ 3000');
+});
+```
+
+3. Create a new file named `login.html` inside the `public` directory with the following code:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Login</h1>
+    <form action="/login" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>
+```
+
+4. Update the `index.html` file inside the `public` directory with the following code:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Information Form</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Customer Information Form</h1>
+    <form action="/submit" method="POST">
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" required>
+
+        <label for="date">Date:</label>
+        <input type="text" id="date" name="date" required>
+
+        <input type="submit" value="Submit">
+    </form>
+    <a href="/logout">Logout</a>
+</body>
+</html>
+```
+
+5. Save all the files.
+
+6. Create a new directory named `data` in your project directory.
+
+Now, when you run the server using `node server.js`, you will have a login page at `http://localhost:3000/login`. After successful login, you will be redirected to the customer information form at `http://localhost:3000`, where you can submit the form data. The data will be stored in separate JSON files for each user inside the `data` directory.
+
+Please note that this example is still basic and may not be suitable for production environments. It is always recommended to implement additional security measures and consider using a database to store user information and form data.
