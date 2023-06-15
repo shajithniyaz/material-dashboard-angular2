@@ -1,12 +1,177 @@
-To add login functionality and categorize the stored data based on individual users, you will need to incorporate user authentication and implement a user-specific data storage mechanism. Here's an updated version of the code using Node.js, Express, and Passport.js for authentication:
 
-1. Install the required dependencies by running the following commands in your project directory:
 
+1. Create a new directory for your project and navigate to that directory in your terminal.
+
+2. Initialize a new Node.js project by running the following command in your terminal:
+```
+npm init -y
+```
+
+3. Install the required dependencies by running the following commands in your terminal:
 ```
 npm install express express-session passport passport-local bcrypt
 ```
 
-2. Update the `server.js` file with the following code:
+4. Create a new directory named `public` in your project directory.
+
+5. Create a new file named `styles.css` inside the `public` directory and add the following code:
+
+```css
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #000000;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+}
+
+header img {
+    height: 40px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-right p {
+    margin: 0 10px;
+}
+
+form {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="password"] {
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+form input[type="submit"] {
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+a {
+    color: #000000;
+    text-decoration: none;
+}
+```
+
+6. Create a new file named `login.html` inside the `public` directory and add the following code:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo">
+    </header>
+
+    <div class="container">
+        <h1>Login</h1>
+        <form action="/login" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</body>
+</html>
+```
+
+7. Create a new file named `index.html` inside the `public` directory and add the following code:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Information Form</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo">
+        <div class="header-right">
+            <p>Welcome, <span id="username"></span></p>
+            <div class="dropdown">
+                <button class="dropbtn">Menu</button>
+                <div class="dropdown-content">
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container
+
+">
+        <h1>Customer Information Form</h1>
+        <form action="/submit" method="POST">
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="id">ID:</label>
+            <input type="text" id="id" name="id" required>
+
+            <label for="date">Date:</label>
+            <input type="text" id="date" name="date" required>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var usernameSpan = document.getElementById('username');
+            var username = localStorage.getItem('username');
+            if (username) {
+                usernameSpan.textContent = username;
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+8. Save the following logo image as `logo.png` in the `public` directory:
+
+![Logo](https://i.imgur.com/pYjJZbg.png)
+
+9. Create a new directory named `data` in your project directory.
+
+10. Create a new file named `server.js` and add the following code:
 
 ```javascript
 const express = require('express');
@@ -85,7 +250,9 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/submit', ensureAuthenticated, (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user.id
+
+;
     const location = req.body.location;
     const name = req.body.name;
     const id = req.body.id;
@@ -117,108 +284,17 @@ app.post('/submit', ensureAuthenticated, (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('Server is running on port
-
- 3000');
+    console.log('Server is running on port 3000');
 });
 ```
 
-3. Create a new file named `login.html` inside the `public` directory with the following code:
+11. Save all the files.
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
-<body>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+12. Create a new directory named `data` in your project directory.
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <input type="submit" value="Login">
-    </form>
-</body>
-</html>
+13. Start the server by running the following command in your terminal:
+```
+node server.js
 ```
 
-4. Update the `index.html` file inside the `public` directory with the following code:
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Customer Information Form</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
-<body>
-    <h1>Customer Information Form</h1>
-    <form action="/submit" method="POST">
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" required>
-
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-
-        <label for="id">ID:</label>
-        <input type="text" id="id" name="id" required>
-
-        <label for="date">Date:</label>
-        <input type="text" id="date" name="date" required>
-
-        <input type="submit" value="Submit">
-    </form>
-    <a href="/logout">Logout</a>
-</body>
-</html>
-```
-
-5. Save all the files.
-
-6. Create a new directory named `data` in your project directory.
-
-Now, when you run the server using `node server.js`, you will have a login page at `http://localhost:3000/login`. After successful login, you will be redirected to the customer information form at `http://localhost:3000`, where you can submit the form data. The data will be stored in separate JSON files for each user inside the `data` directory.
-
-Please note that this example is still basic and may not be suitable for production environments. It is always recommended to implement additional security measures and consider using a database to store user information and form data.
-
-
-
-
-body {
-    background-color: #000;
-    color: #fff;
-    font-family: Arial, sans-serif;
-}
-
-h1 {
-    text-align: center;
-}
-
-form {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-label {
-    display: block;
-    margin-top: 10px;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-}
-
-input[type="submit"] {
-    background-color: #fff;
-    color: #000;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 20px;
-    cursor: pointer;
-}
+14. Open your web browser and visit `http://localhost:3000/login`. You should see the login page with a black header, logo in the left corner, and the user name displayed in the right corner. After successful login, you will be redirected to the customer information form at `http://localhost:3000`, where you can submit the form data. The data will be stored in separate JSON files for each user inside the `data` directory.
