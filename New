@@ -141,7 +141,7 @@
       </tbody>
     </table>
     <br>
-    <input type="submit" value="Submit">
+    <input type="submit" value="Submit" onclick="submitForm()">
   </form>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
@@ -168,7 +168,6 @@
     }
 
     function handleFileUpload(event) {
-      
       var file = event.target.files[0];
       var reader = new FileReader();
 
@@ -187,7 +186,7 @@
             <td><input type="text" name="place[]" value="${jsonData[i][0]}" required></td>
             <td><input type="text" name="name[]" value="${jsonData[i][1]}" required></td>
             <td><input type="text" name="id[]" value="${jsonData[i][2]}" required></td>
-            <td><input type="date" name="date[]" value="${parseDate(jsonData[i][3])}" required></td>
+            <td><input type="date" name="date[]" value="${formatDate(jsonData[i][3])}" required></td>
             <td>
               <span class="remove-icon" onclick="removeLineItem(this)">&#8722;</span>
             </td>
@@ -200,16 +199,45 @@
       document.getElementById('selectedFile').textContent = file.name; // Update selected file name
     }
 
-    function parseDate(dateString) {
-      var momentDate = moment(dateString);
-      if (momentDate.isValid()) {
-        return momentDate.format('YYYY-MM-DD');
+    function formatDate(dateString) {
+      var date = moment(dateString, ['MM-DD-YYYY', 'DD-MM-YYYY', 'YYYY-MM-DD'], true);
+      if (date.isValid()) {
+        return date.format('YYYY-MM-DD');
       } else {
         return '';
       }
     }
+
+    function submitForm() {
+      var formData = {
+        lineItems: []
+      };
+
+      var rows = document.querySelectorAll('#lineItems tr');
+      rows.forEach(function(row) {
+        var place = row.querySelector('input[name="place[]"]').value;
+        var name = row.querySelector('input[name="name[]"]').value;
+        var id = row.querySelector('input[name="id[]"]').value;
+        var date = row.querySelector('input[name="date[]"]').value;
+
+        formData.lineItems.push({
+          place: place,
+          name: name,
+          id: id,
+          date: date
+        });
+      });
+
+      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(formData, null, 2));
+      var downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', 'form_data.json');
+      downloadAnchor.click();
+
+      // Show a notification and reset the form
+      alert('Form submitted successfully!');
+      document.getElementById('lineItemForm').reset();
+    }
   </script>
 </body>
 </html>
-
-
