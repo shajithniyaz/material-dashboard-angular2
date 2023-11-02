@@ -1,243 +1,64 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Line Item Form</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
+Year-End Review 2023
 
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+Primary Goals:
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+1. **Completed Security Gate Dashboard**
+   - **Description**: Successfully designed and implemented a Security Gate Dashboard, enhancing the company's security monitoring capabilities. This tool provides real-time insights into potential threats, ensuring a more secure working environment.
+   
+2. **Developed Online Application for CIM (Customer Information Management)**
+   - **Description**: Created an efficient online application for CIM, streamlining customer data management. This project improved data accuracy and accessibility, resulting in enhanced customer service and satisfaction.
+   
+3. **Embedded Security Gate Dashboard to VCSD (Virtual Customer Support Desk)**
+   - **Description**: Integrated the Security Gate Dashboard into the VCSD, improving the support team's ability to respond to security-related customer queries. This integration has led to quicker response times and improved customer confidence.
+   
+4. **Developing Portal and Slackbot**
+   - **Description**: Currently working on the development of a user-friendly portal and a Slackbot to further enhance internal communication and automation. These projects are expected to increase efficiency and facilitate better collaboration within the organization.
 
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
+Extra Accomplishments:
 
-    th {
-      background-color: #f2f2f2;
-      font-weight: bold;
-    }
+1. **Support for Onshore Interns**
+   - **Description**: Provided valuable support and mentorship to onshore interns, contributing to their growth and fostering a culture of knowledge sharing within the company.
 
-    .add-icon, .remove-icon {
-      cursor: pointer;
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-      text-align: center;
-      background-color: #007bff;
-      color: #fff;
-      border-radius: 50%;
-      transition: background-color 0.3s;
-    }
+2. **Assisting Other Teams Using Our Platform**
+   - **Description**: Collaborated with various teams that rely on our platform, offering technical assistance and guidance. This interdepartmental support improved cross-functional collaboration and achieved smoother operations.
 
-    .add-icon:hover, .remove-icon:hover {
-      background-color: #0056b3;
-    }
+3. **Identified Vulnerabilities on Team India Portal**
+   - **Description**: Discovered and reported vulnerabilities on the Team India portal, resulting in prompt security updates and reinforcing the organization's commitment to data security.
 
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
+Spotlight Awards:
 
-    input[type="date"] {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
+- **"Performance Excellence"**
+   - Recognized for consistently delivering high-quality work, meeting and often exceeding performance expectations.
 
-    input[type="submit"] {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+- **"Taking Responsibility"**
+   - Acknowledged for taking ownership of projects and ensuring their successful completion, even under challenging circumstances.
 
-    input[type="submit"]:hover {
-      background-color: #0056b3;
-    }
+- **"Teamwork"**
+   - Celebrated for exceptional teamwork, demonstrating effective collaboration skills and contributing to a positive and cohesive work environment.
 
-    .upload-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
+Wall Recognitions:
 
-    .upload-container input[type="file"] {
-      display: none;
-    }
+- **Ramesh**
+   - Appreciated by Ramesh for outstanding contributions to the team's success and commitment to maintaining a secure working environment.
 
-    .upload-btn {
-      display: inline-block;
-      padding: 10px 15px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+- **Sathish**
+   - Recognized by Sathish for the dedication and support provided in achieving departmental goals and improving customer service.
 
-    .upload-btn:hover {
-      background-color: #0056b3;
-    }
+Projected Goals for Next Year:
 
-    .selected-file {
-      flex-grow: 1;
-      margin-left: 10px;
-      color: #555;
-    }
-  </style>
-</head>
-<body>
-  <h2>Line Item Form</h2>
-  <div class="upload-container">
-    <label for="fileUpload" class="upload-btn">Upload Excel File</label>
-    <input type="file" id="fileUpload" accept=".xlsx, .xls" onchange="handleFileUpload(event)">
-    <span id="selectedFile" class="selected-file">No file selected</span>
-  </div>
-  <form id="lineItemForm">
-    <table>
-      <thead>
-        <tr>
-          <th>Place</th>
-          <th>Name</th>
-          <th>ID</th>
-          <th>Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="lineItems">
-        <tr>
-          <td><input type="text" name="place[]" required></td>
-          <td><input type="text" name="name[]" required></td>
-          <td><input type="text" name="id[]" required></td>
-          <td><input type="date" name="date[]" required></td>
-          <td>
-            <span class="add-icon" onclick="addLineItem()">&#43;</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <br>
-    <input type="submit" value="Submit" onclick="submitForm()">
-  </form>
+1. **Enhance the Portal and Slackbot**
+   - Continue working on the development of the portal and Slackbot to further improve communication, automation, and employee productivity.
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-  <script>
-    function addLineItem() {
-      var lineItems = document.getElementById('lineItems');
-      var newRow = document.createElement('tr');
-      newRow.innerHTML = `
-        <td><input type="text" name="place[]" required></td>
-        <td><input type="text" name="name[]" required></td>
-        <td><input type="text" name="id[]" required></td>
-        <td><input type="date" name="date[]" required></td>
-        <td>
-          <span class="remove-icon" onclick="removeLineItem(this)">&#8722;</span>
-        </td>
-      `;
-      lineItems.appendChild(newRow);
-    }
+2. **Strengthen Security Measures**
+   - Focus on enhancing security protocols, proactively identifying potential threats, and implementing preventive measures to safeguard company assets.
 
-    function removeLineItem(row) {
-      var lineItems = document.getElementById('lineItems');
-      lineItems.removeChild(row.parentNode.parentNode);
-    }
+3. **Mentorship Program Expansion**
+   - Extend mentorship efforts to empower more interns and junior team members, promoting professional growth and knowledge sharing.
 
-    function handleFileUpload(event) {
-      var file = event.target.files[0];
-      var reader = new FileReader();
+4. **Cross-Department Collaboration**
+   - Continue to facilitate cooperation with other departments, providing technical support and knowledge transfer to improve overall operations.
 
-      reader.onload = function(e) {
-        var data = new Uint8Array(e.target.result);
-        var workbook = XLSX.read(data, { type: 'array' });
-        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+5. **Further Contributions to Security**
+   - Remain vigilant in identifying and addressing vulnerabilities, ensuring data security across all platforms and projects.
 
-        var lineItems = document.getElementById('lineItems');
-        lineItems.innerHTML = ''; // Clear existing line items
-
-        for (var i = 1; i < jsonData.length; i++) {
-          var newRow = document.createElement('tr');
-          newRow.innerHTML = `
-            <td><input type="text" name="place[]" value="${jsonData[i][0]}" required></td>
-            <td><input type="text" name="name[]" value="${jsonData[i][1]}" required></td>
-            <td><input type="text" name="id[]" value="${jsonData[i][2]}" required></td>
-            <td><input type="date" name="date[]" value="${formatDate(jsonData[i][3])}" required></td>
-            <td>
-              <span class="remove-icon" onclick="removeLineItem(this)">&#8722;</span>
-            </td>
-          `;
-          lineItems.appendChild(newRow);
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-      document.getElementById('selectedFile').textContent = file.name; // Update selected file name
-    }
-
-    function formatDate(dateString) {
-      var date = moment(dateString, ['MM-DD-YYYY', 'DD-MM-YYYY', 'YYYY-MM-DD'], true);
-      if (date.isValid()) {
-        return date.format('YYYY-MM-DD');
-      } else {
-        return '';
-      }
-    }
-
-    function submitForm() {
-      var formData = {
-        lineItems: []
-      };
-
-      var rows = document.querySelectorAll('#lineItems tr');
-      rows.forEach(function(row) {
-        var place = row.querySelector('input[name="place[]"]').value;
-        var name = row.querySelector('input[name="name[]"]').value;
-        var id = row.querySelector('input[name="id[]"]').value;
-        var date = row.querySelector('input[name="date[]"]').value;
-
-        formData.lineItems.push({
-          place: place,
-          name: name,
-          id: id,
-          date: date
-        });
-      });
-
-      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(formData, null, 2));
-      var downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute('href', dataStr);
-      downloadAnchor.setAttribute('download', 'form_data.json');
-      downloadAnchor.click();
-
-      // Show a notification and reset the form
-      alert('Form submitted successfully!');
-      document.getElementById('lineItemForm').reset();
-    }
-  </script>
-</body>
-</html>
+In conclusion, the year 2023 has been a year of significant accomplishments, recognition, and growth. Looking forward to the next year, we aim to build upon these successes and continue to make valuable contributions to our organization's success.
