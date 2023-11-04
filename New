@@ -1,64 +1,29 @@
-Year-End Review 2023
+Embedding a Looker dashboard on your organization's website and making it publicly accessible requires specific settings within Looker. To achieve this, you'll need to follow these steps:
 
-Primary Goals:
+1. **Access Looker Admin or Permissions**: You need to have appropriate permissions in Looker to make a dashboard publicly accessible. Ensure you have the necessary permissions to modify the dashboard's settings.
 
-1. **Completed Security Gate Dashboard**
-   - **Description**: Successfully designed and implemented a Security Gate Dashboard, enhancing the company's security monitoring capabilities. This tool provides real-time insights into potential threats, ensuring a more secure working environment.
-   
-2. **Developed Online Application for CIM (Customer Information Management)**
-   - **Description**: Created an efficient online application for CIM, streamlining customer data management. This project improved data accuracy and accessibility, resulting in enhanced customer service and satisfaction.
-   
-3. **Embedded Security Gate Dashboard to VCSD (Virtual Customer Support Desk)**
-   - **Description**: Integrated the Security Gate Dashboard into the VCSD, improving the support team's ability to respond to security-related customer queries. This integration has led to quicker response times and improved customer confidence.
-   
-4. **Developing Portal and Slackbot**
-   - **Description**: Currently working on the development of a user-friendly portal and a Slackbot to further enhance internal communication and automation. These projects are expected to increase efficiency and facilitate better collaboration within the organization.
+2. **Navigate to the Dashboard**: Go to the Looker dashboard you want to embed and make publicly accessible.
 
-Extra Accomplishments:
+3. **Edit Dashboard Permissions**:
+   - Click on the "Edit" option for the dashboard.
+   - In the dashboard settings, navigate to the "Access" or "Permissions" section.
 
-1. **Support for Onshore Interns**
-   - **Description**: Provided valuable support and mentorship to onshore interns, contributing to their growth and fostering a culture of knowledge sharing within the company.
+4. **Change Permissions**:
+   - You may need to change the dashboard's permissions from private to public. To do this:
+     - Remove any specific users or groups from the access list.
+     - Add the "Everyone" or "Public" group to the access list with the appropriate permissions (usually 'View' access).
 
-2. **Assisting Other Teams Using Our Platform**
-   - **Description**: Collaborated with various teams that rely on our platform, offering technical assistance and guidance. This interdepartmental support improved cross-functional collaboration and achieved smoother operations.
+5. **Generate Embed Code**:
+   - After making the dashboard public, you can generate the embed code.
+   - Click on the "Share" or "Embed" option for the dashboard.
+   - Customize the options for embedding, such as the layout, size, and any filters.
+   - Copy the generated embed code.
 
-3. **Identified Vulnerabilities on Team India Portal**
-   - **Description**: Discovered and reported vulnerabilities on the Team India portal, resulting in prompt security updates and reinforcing the organization's commitment to data security.
+6. **Embed on Your Website**:
+   - Paste the copied embed code into the HTML code of your organization's website where you want the Looker dashboard to appear.
 
-Spotlight Awards:
+7. **Test**: Ensure the embedded dashboard works as expected on your website and is accessible to everyone.
 
-- **"Performance Excellence"**
-   - Recognized for consistently delivering high-quality work, meeting and often exceeding performance expectations.
+Please note that making a dashboard public means that anyone with the embed code or the URL can access it. Be cautious about sharing sensitive or confidential data publicly, and ensure you are compliant with your organization's data security policies.
 
-- **"Taking Responsibility"**
-   - Acknowledged for taking ownership of projects and ensuring their successful completion, even under challenging circumstances.
-
-- **"Teamwork"**
-   - Celebrated for exceptional teamwork, demonstrating effective collaboration skills and contributing to a positive and cohesive work environment.
-
-Wall Recognitions:
-
-- **Ramesh**
-   - Appreciated by Ramesh for outstanding contributions to the team's success and commitment to maintaining a secure working environment.
-
-- **Sathish**
-   - Recognized by Sathish for the dedication and support provided in achieving departmental goals and improving customer service.
-
-Projected Goals for Next Year:
-
-1. **Enhance the Portal and Slackbot**
-   - Continue working on the development of the portal and Slackbot to further improve communication, automation, and employee productivity.
-
-2. **Strengthen Security Measures**
-   - Focus on enhancing security protocols, proactively identifying potential threats, and implementing preventive measures to safeguard company assets.
-
-3. **Mentorship Program Expansion**
-   - Extend mentorship efforts to empower more interns and junior team members, promoting professional growth and knowledge sharing.
-
-4. **Cross-Department Collaboration**
-   - Continue to facilitate cooperation with other departments, providing technical support and knowledge transfer to improve overall operations.
-
-5. **Further Contributions to Security**
-   - Remain vigilant in identifying and addressing vulnerabilities, ensuring data security across all platforms and projects.
-
-In conclusion, the year 2023 has been a year of significant accomplishments, recognition, and growth. Looking forward to the next year, we aim to build upon these successes and continue to make valuable contributions to our organization's success.
+Always consult Looker's official documentation or seek guidance from your Looker admin if you encounter any specific issues or have further questions regarding embedding and permissions.
