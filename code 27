@@ -1,314 +1,58 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Comparing Iframes</title>
-    <style>
-      body {
-        display: flex;
-        height: 100vh;
-        margin: 0;
-        padding: 0;
-      }
+DECLARE @EmailContent NVARCHAR(MAX);
 
-      #frameContainer {
-        flex: 2;
-        display: flex;
-      }
+-- Assuming you have a sample table named 'YourTable' with columns 'Column1', 'Column2'
+DECLARE @Query NVARCHAR(MAX) = '
+    SELECT Column1, Column2
+    FROM YourTable
+';
 
-      .iframeWrapper {
-        flex: 1;
-        margin-right: 10px;
-      }
+DECLARE @TableContent NVARCHAR(MAX) = '';
 
-      #buttonContainer {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        padding: 10px;
-        background-color: #f2f2f2;
-      }
+-- Execute the dynamic query to get data from the database
+EXEC sp_executesql @Query;
 
-      .frameButtons {
-        display: flex;
-        flex-wrap: wrap;
-        margin-bottom: 10px;
-      }
+-- Construct the HTML table content from the result set
+SET @TableContent = (
+    SELECT
+        '<tr><td>' + CAST(Column1 AS NVARCHAR(MAX)) + '</td><td>' + CAST(Column2 AS NVARCHAR(MAX)) + '</td></tr>'
+    FROM
+        YourTable
+    FOR XML PATH('')
+);
 
-      .frameButton {
-        display: flex;
-        align-items: center;
-        margin-right: 10px;
-        margin-bottom: 5px;
-      }
+-- Construct the full HTML content with the table
+SET @EmailContent = '
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; }
+            h1 { color: #007bff; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+            th { background-color: #f2f2f2; }
+        </style>
+    </head>
+    <body>
+        <h1>Your Email Heading</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Column 1</th>
+                    <th>Column 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                ' + @TableContent + '
+            </tbody>
+        </table>
+    </body>
+    </html>
+';
 
-      .frameButton:hover {
-        cursor: pointer;
-      }
-
-      .frameButtonIcon {
-        margin-right: 5px;
-      }
-
-      .filtersContainer {
-        margin-bottom: 10px;
-      }
-
-      .filter {
-        display: flex;
-        align-items: center;
-        margin-right: 5px;
-        background-color: #f9f9f9;
-        padding: 5px;
-        border-radius: 3px;
-      }
-
-      .filterValue {
-        margin-right: 5px;
-      }
-
-      .filterDeleteIcon {
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="frameContainer"></div>
-
-    <div id="buttonContainer">
-      <div class="frameButtons">
-        <div class="frameButton" onclick="openFrame(1)">
-          <span class="frameButtonIcon">⬛</span>
-          Open Frame 1
-        </div>
-        <div class="frameButton" onclick="compareFrame(1)">
-          <span id="compareIcon1" class="frameButtonIcon">➕</span>
-          Compare Frame 1
-        </div>
-      </div>
-
-      <div class="frameButtons">
-        <div class="frameButton" onclick="openFrame(2)">
-          <span class="frameButtonIcon">⬛</span>
-          Open Frame 2
-        </div>
-        <div class="frameButton" onclick="compareFrame(2)">
-          <span id="compareIcon2" class="frameButtonIcon">➕</span>
-          Compare Frame 2
-        </div>
-      </div>
-
-      <div class="frameButtons">
-        <div class="frameButton" onclick="openFrame(3)">
-          <span class="frameButtonIcon">⬛</span>
-          Open Frame 3
-        </div>
-        <div class="frameButton" onclick="compareFrame(3)">
-          <span id="compareIcon3" class="frameButtonIcon">➕</span>
-          Compare Frame 3
-        </div>
-      </div>
-
-      <div class="filtersContainer">
-        <button onclick="toggleFilterDropdown()">Add Filters</button>
-        <div id="filterDropdown" style="display: none">
-          <select id="filterTypeSelect">
-            <option value="ID">ID</option>
-            <option value="Date">Date</option>
-            <option value="Name">Name</option>
-          </select>
-          <input id="filterValueInput" type="text" placeholder="Filter Value" />
-          <button onclick="addFilter()">Save Filter</button>
-        </div>
-      </div>
-
-      <div id="appliedFilters"></div>
-
-      <button onclick="clearFilters()">Clear Filters</button>
-    </div>
-
-    <script>
-      var frameContainer = document.getElementById('frameContainer');
-      var frameStates = {};
-      var compareMode = false;
-      var filters = {};
-
-      // Define the URLs for the three iframes
-      var urls = {
-        iframe1: 'https://www.example.com/iframe1',
-        iframe2: 'https://www.google.com/iframe2',
-        iframe3: 'https://www.example.com/iframe3',
-      };
-
-      function openFrame(frameNumber) {
-        var iframeId = 'iframe' + frameNumber;
-
-        if (frameStates[iframeId]) {
-          // Frame is already open, switch focus
-          switchFocus(iframeId);
-        } else {
-          // Frame is closed, open it
-          closeAllFrames();
-          createIframe(iframeId);
-          frameStates[iframeId] = true;
-          applyFilters(iframeId);
-        }
-      }
-
-      function compareFrame(frameNumber) {
-        var iframeId = 'iframe' + frameNumber;
-        var compareIcon = document.getElementById('compareIcon' + frameNumber);
-
-        if (frameStates[iframeId]) {
-          // Frame is open, remove it
-          removeIframe(iframeId);
-          compareIcon.textContent = '➕';
-          frameStates[iframeId] = false;
-        } else {
-          // Frame is closed, add it
-          createIframe(iframeId);
-          compareIcon.textContent = '➖';
-          frameStates[iframeId] = true;
-          applyFilters(iframeId);
-        }
-
-        updateFrameSizes();
-      }
-
-      function createIframe(iframeId) {
-        var newIframeWrapper = document.createElement('div');
-        newIframeWrapper.className = 'iframeWrapper';
-        var newIframe = document.createElement('iframe');
-        newIframe.id = iframeId;
-        newIframe.width = '100%';
-        newIframe.height = '100%';
-        newIframeWrapper.appendChild(newIframe);
-        frameContainer.appendChild(newIframeWrapper);
-      }
-
-      function removeIframe(iframeId) {
-        var iframeWrapper = document.getElementById(iframeId).parentNode;
-        frameContainer.removeChild(iframeWrapper);
-      }
-
-      function closeAllFrames() {
-        for (var frameId in frameStates) {
-          if (frameStates.hasOwnProperty(frameId) && frameStates[frameId]) {
-            removeIframe(frameId);
-            frameStates[frameId] = false;
-          }
-        }
-      }
-
-      function switchFocus(iframeId) {
-        var iframeWrapper = document.getElementById(iframeId).parentNode;
-        var currentIndex = Array.prototype.indexOf.call(frameContainer.children, iframeWrapper);
-        var nextIndex = (currentIndex + 1) % frameContainer.children.length;
-        frameContainer.insertBefore(iframeWrapper, frameContainer.children[nextIndex]);
-      }
-
-      function updateFrameSizes() {
-        var iframeWrappers = frameContainer.getElementsByClassName('iframeWrapper');
-        var numFrames = iframeWrappers.length;
-
-        if (compareMode) {
-          // Divide the available space equally among the frames
-          var frameWidth = 'calc(50% - 5px)';
-          for (var i = 0; i < numFrames; i++) {
-            iframeWrappers[i].style.width = frameWidth;
-          }
-        } else {
-          // Each frame occupies the entire area
-          for (var j = 0; j < numFrames; j++) {
-            iframeWrappers[j].style.width = '100%';
-          }
-        }
-      }
-
-      function toggleFilterDropdown() {
-        var filterDropdown = document.getElementById('filterDropdown');
-        filterDropdown.style.display = filterDropdown.style.display === 'none' ? 'block' : 'none';
-      }
-
-      function addFilter() {
-        var filterTypeSelect = document.getElementById('filterTypeSelect');
-        var filterValueInput = document.getElementById('filterValueInput');
-
-        var filterType = filterTypeSelect.value;
-        var filterValue = filterValueInput.value.trim();
-
-        if (filterValue !== '') {
-          filters[filterType] = filterValue;
-          createFilterElement(filterType, filterValue);
-          filterValueInput.value = '';
-          applyFiltersToAllFrames();
-        }
-      }
-
-      function createFilterElement(filterType, filterValue) {
-        var appliedFilters = document.getElementById('appliedFilters');
-
-        var filterContainer = document.createElement('div');
-        filterContainer.className = 'filter';
-
-        var filterText = document.createElement('span');
-        filterText.className = 'filterValue';
-        filterText.textContent = filterType + ': ' + filterValue;
-
-        var deleteIcon = document.createElement('span');
-        deleteIcon.className = 'filterDeleteIcon';
-        deleteIcon.textContent = '❌';
-        deleteIcon.onclick = function () {
-          removeFilter(filterType);
-        };
-
-        filterContainer.appendChild(filterText);
-        filterContainer.appendChild(deleteIcon);
-
-        appliedFilters.appendChild(filterContainer);
-      }
-
-      function removeFilter(filterType) {
-        delete filters[filterType];
-        applyFiltersToAllFrames();
-      }
-
-      function applyFiltersToAllFrames() {
-        for (var frameId in frameStates) {
-          if (frameStates.hasOwnProperty(frameId) && frameStates[frameId]) {
-            applyFilters(frameId);
-          }
-        }
-      }
-
-
-      function applyFilters(iframeId) {
-        var iframe = document.getElementById(iframeId);
-        var iframeSrc = urls[iframeId] || '';
-
-        var hasFilters = false;
-
-        for (var filterType in filters) {
-          if (filters.hasOwnProperty(filterType)) {
-            hasFilters = true;
-            iframeSrc += '&' + filterType + '=' + encodeURIComponent(filters[filterType]);
-          }
-        }
-
-        if (hasFilters) {
-          iframe.src = iframeSrc;
-        } else {
-          iframe.src = urls[iframeId] || '';
-        }
-      }
-
-      function clearFilters() {
-        filters = {};
-        var appliedFilters = document.getElementById('appliedFilters');
-        appliedFilters.innerHTML = '';
-        applyFiltersToAllFrames();
-      }
-    </script>
-  </body>
-</html>
+-- Assuming @ToAddress, @Subject, and other variables are set appropriately
+EXEC msdb.dbo.sp_send_dbmail
+    @profile_name = 'YourMailProfile',
+    @recipients = 'recipient@example.com',
+    @subject = 'Test Email with Table from Database',
+    @body = @EmailContent,
+    @body_format = 'HTML';
